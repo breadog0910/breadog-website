@@ -1,5 +1,7 @@
 import FrontLayout from "@/components/front-layout";
+import LetterGlitch from "@/components/LetterGlitch";
 import CursorGrid from "@/components/CursorGrid";
+import ContactForm from "@/components/contact-form";
 import { createClient } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
@@ -21,8 +23,23 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* CursorGrid 背景特效 — 放 FrontLayout 外，fixed 覆盖全视口，pointer-events-none 不阻挡点击 */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
+      {/* 上半屏：LetterGlitch 字母矩阵 */}
+      <div className="fixed top-0 left-0 w-full h-[50vh] z-0 pointer-events-none">
+        <LetterGlitch
+          glitchColors={["#6366f1", "#818cf8", "#22d3ee"]}
+          glitchSpeed={45}
+          smooth
+          mouseRadius={150}
+          falloff="smooth"
+          holdTime={300}
+          fadeDuration={800}
+          clickPulse
+          pulseSpeed={700}
+        />
+      </div>
+
+      {/* 下半屏：CursorGrid 网格 */}
+      <div className="fixed top-[50vh] left-0 w-full h-[50vh] z-0 pointer-events-none">
         <CursorGrid
           cellSize={70}
           color="#6366f1"
@@ -41,7 +58,7 @@ export default async function HomePage() {
       </div>
 
       <FrontLayout>
-        <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
+        <div className="relative z-10 max-w-3xl mx-auto px-4 py-16 sm:py-24">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-16">
           {/* 头像 */}
           <div className="flex-shrink-0">
@@ -150,6 +167,12 @@ export default async function HomePage() {
             </div>
           </section>
         )}
+
+        {/* 联系表单 */}
+        <section className="mt-16">
+          <h2 className="text-xl font-semibold mb-4">给我留言</h2>
+          <ContactForm />
+        </section>
         </div>
     </FrontLayout>
     </>

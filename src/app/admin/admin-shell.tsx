@@ -11,6 +11,7 @@ const ADMIN_LINKS = [
   { href: "/admin/projects", label: "作品管理", icon: "💼" },
   { href: "/admin/posts", label: "文章管理", icon: "📝" },
   { href: "/admin/hobbies", label: "爱好管理", icon: "🎯" },
+  { href: "/admin/messages", label: "留言管理", icon: "📬" },
 ];
 
 export default function AdminShell({

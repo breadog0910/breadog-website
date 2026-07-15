@@ -73,6 +73,15 @@ export interface Hobby {
   updated_at: string;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 export const HOBBY_CATEGORIES = [
   { value: "photography", label: "摄影", icon: "📷" },
   { value: "music", label: "音乐", icon: "🎵" },

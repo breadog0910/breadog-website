@@ -281,7 +281,13 @@ export default function CursorGrid({
       return [e.clientX - rect.left, e.clientY - rect.top];
     };
 
+    const inBounds = (cx: number, cy: number) => {
+      const r = canvas.getBoundingClientRect();
+      return cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom;
+    };
+
     const onPointerMove = (e: PointerEvent) => {
+      if (!inBounds(e.clientX, e.clientY)) return;
       const [x, y] = toLocal(e);
       energize(x, y);
       wake();
@@ -289,6 +295,7 @@ export default function CursorGrid({
 
     const onPointerDown = (e: PointerEvent) => {
       if (!propsRef.current.clickPulse) return;
+      if (!inBounds(e.clientX, e.clientY)) return;
       const [x, y] = toLocal(e);
       pulses.push({ x, y, t0: performance.now() });
       wake();

@@ -82,7 +82,7 @@ ALTER TABLE profile ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE timeline ENABLE ROW LEVEL SECURITY;
-ALTER TABLE hobbies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 
 -- Profile: 公开可读，仅认证用户可写
 CREATE POLICY "Profile is public readable" ON profile
@@ -124,6 +124,27 @@ CREATE POLICY "Hobbies manageable by authenticated users" ON hobbies
   FOR ALL USING (auth.role() = 'authenticated')
   WITH CHECK (auth.role() = 'authenticated');
 
+-- Contact Messages: 仅认证用户可读，任意用户可插入（API 层通过 service client 执行）
+CREATE POLICY "Contact messages readable by authenticated users" ON contact_messages
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Contact messages insertable by anyone" ON contact_messages
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Contact messages updatable by authenticated users" ON contact_messages
+  FOR UPDATE USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+
+-- 6. contact_messages 表（联系表单提交）
+CREATE TABLE contact_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL DEFAULT '',
+  email TEXT NOT NULL DEFAULT '',
+  message TEXT NOT NULL DEFAULT '',
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- =====================================================
 -- 7. 索引
 -- =====================================================
@@ -134,6 +155,7 @@ CREATE INDEX idx_posts_created ON posts(created_at DESC);
 CREATE INDEX idx_timeline_date ON timeline(date);
 CREATE INDEX idx_hobbies_category ON hobbies(category);
 CREATE INDEX idx_hobbies_sort ON hobbies(sort_order);
+CREATE INDEX idx_contact_messages_created ON contact_messages(created_at DESC);
 
 -- =====================================================
 -- 7. 插入默认 profile 数据
