@@ -1,4 +1,5 @@
 import FrontLayout from "@/components/front-layout";
+import CursorGrid from "@/components/CursorGrid";
 import { createClient } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
@@ -19,8 +20,28 @@ export default async function HomePage() {
   const profile = await getProfile();
 
   return (
-    <FrontLayout>
-      <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
+    <>
+      {/* CursorGrid 背景特效 — 放 FrontLayout 外，fixed 覆盖全视口，pointer-events-none 不阻挡点击 */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <CursorGrid
+          cellSize={70}
+          color="#6366f1"
+          radius={140}
+          falloff="smooth"
+          holdTime={400}
+          fadeDuration={800}
+          lineWidth={1.2}
+          maxOpacity={1}
+          fillOpacity={0}
+          gridOpacity={0.04}
+          cellRadius={0}
+          clickPulse
+          pulseSpeed={600}
+        />
+      </div>
+
+      <FrontLayout>
+        <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-16">
           {/* 头像 */}
           <div className="flex-shrink-0">
@@ -129,7 +150,8 @@ export default async function HomePage() {
             </div>
           </section>
         )}
-      </div>
+        </div>
     </FrontLayout>
+    </>
   );
 }
