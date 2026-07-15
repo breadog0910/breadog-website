@@ -20,6 +20,8 @@ export default function ProfileEditPage() {
     skills: "",
     social_links: "",
     contact_email: "",
+    splash_subtitle: "",
+    splash_description: "",
   });
 
   useEffect(() => {
@@ -38,6 +40,8 @@ export default function ProfileEditPage() {
               ? JSON.stringify(data.social_links, null, 2)
               : "",
           contact_email: data.contact_email || "",
+          splash_subtitle: data.splash_subtitle || "",
+          splash_description: data.splash_description || "",
         });
       }
       setLoading(false);
@@ -70,6 +74,8 @@ export default function ProfileEditPage() {
         .filter(Boolean),
       social_links: socialLinks,
       contact_email: form.contact_email,
+      splash_subtitle: form.splash_subtitle,
+      splash_description: form.splash_description,
     };
 
     const { error } = await supabase
@@ -196,6 +202,41 @@ export default function ProfileEditPage() {
             className="w-full px-3 py-2 rounded-lg bg-background border border-card-border
                        text-foreground text-sm focus:outline-none focus:border-primary/50"
           />
+        </div>
+
+        {/* 开场页文案 */}
+        <div className="pt-4 border-t border-card-border">
+          <h3 className="text-sm font-semibold text-foreground mb-3">
+            🎨 开场页文案
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-muted mb-1.5">
+                副标题（标题下方大字）
+              </label>
+              <input
+                type="text"
+                value={form.splash_subtitle}
+                onChange={(e) => setForm({ ...form, splash_subtitle: e.target.value })}
+                placeholder="软件工程学生 · 技术探索者 · 创造者"
+                className="w-full px-3 py-2 rounded-lg bg-background border border-card-border
+                           text-foreground text-sm focus:outline-none focus:border-primary/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-muted mb-1.5">
+                描述（副标题下方小字）
+              </label>
+              <input
+                type="text"
+                value={form.splash_description}
+                onChange={(e) => setForm({ ...form, splash_description: e.target.value })}
+                placeholder="记录学习之路，分享技术思考，展示创造之物"
+                className="w-full px-3 py-2 rounded-lg bg-background border border-card-border
+                           text-foreground text-sm focus:outline-none focus:border-primary/50"
+              />
+            </div>
+          </div>
         </div>
 
         <button

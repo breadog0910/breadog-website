@@ -13,6 +13,8 @@ CREATE TABLE profile (
   skills JSONB DEFAULT '[]'::jsonb,
   social_links JSONB DEFAULT '{}'::jsonb,
   contact_email TEXT DEFAULT '',
+  splash_subtitle TEXT DEFAULT '',
+  splash_description TEXT DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );

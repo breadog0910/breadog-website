@@ -9,6 +9,8 @@ export interface Profile {
   skills: string[];
   social_links: SocialLinks;
   contact_email: string;
+  splash_subtitle: string;
+  splash_description: string;
   created_at: string;
   updated_at: string;
 }
