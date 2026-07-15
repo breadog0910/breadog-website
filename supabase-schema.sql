@@ -48,8 +48,8 @@ CREATE TABLE posts (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 4. Timeline 表（时间线）
-CREATE TABLE timeline (
+-- 4. Timeline 表（时间线）— 已废弃，保留兼容
+CREATE TABLE IF NOT EXISTS timeline (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description TEXT DEFAULT '',
@@ -60,8 +60,21 @@ CREATE TABLE timeline (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 5. Hobbies 表（个人爱好展示）
+CREATE TABLE hobbies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  description TEXT DEFAULT '',
+  category TEXT NOT NULL DEFAULT 'other' CHECK (category IN ('photography', 'music', 'skills', 'gaming', 'reading', 'other')),
+  cover_url TEXT DEFAULT '',
+  link TEXT DEFAULT '',
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- =====================================================
--- 5. RLS (Row Level Security) 策略
+-- 6. RLS (Row Level Security) 策略
 -- =====================================================
 
 -- 启用所有表的 RLS
@@ -69,6 +82,7 @@ ALTER TABLE profile ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE timeline ENABLE ROW LEVEL SECURITY;
+ALTER TABLE hobbies ENABLE ROW LEVEL SECURITY;
 
 -- Profile: 公开可读，仅认证用户可写
 CREATE POLICY "Profile is public readable" ON profile
@@ -102,14 +116,24 @@ CREATE POLICY "Timeline manageable by authenticated users" ON timeline
   FOR ALL USING (auth.role() = 'authenticated')
   WITH CHECK (auth.role() = 'authenticated');
 
+-- Hobbies: 公开可读，认证用户可管理所有
+CREATE POLICY "Hobbies public readable" ON hobbies
+  FOR SELECT USING (true);
+
+CREATE POLICY "Hobbies manageable by authenticated users" ON hobbies
+  FOR ALL USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+
 -- =====================================================
--- 6. 索引
+-- 7. 索引
 -- =====================================================
 
 CREATE INDEX idx_projects_sort ON projects(sort_order);
 CREATE INDEX idx_posts_slug ON posts(slug);
 CREATE INDEX idx_posts_created ON posts(created_at DESC);
 CREATE INDEX idx_timeline_date ON timeline(date);
+CREATE INDEX idx_hobbies_category ON hobbies(category);
+CREATE INDEX idx_hobbies_sort ON hobbies(sort_order);
 
 -- =====================================================
 -- 7. 插入默认 profile 数据

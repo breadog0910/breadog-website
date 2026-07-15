@@ -8,7 +8,7 @@ interface DashboardStats {
   projects: number;
   posts: number;
   publishedPosts: number;
-  timeline: number;
+  hobbies: number;
 }
 
 export default function DashboardPage() {
@@ -17,7 +17,7 @@ export default function DashboardPage() {
     projects: 0,
     posts: 0,
     publishedPosts: 0,
-    timeline: 0,
+    hobbies: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -25,10 +25,10 @@ export default function DashboardPage() {
     if (!supabase) return;
     async function fetchStats() {
       try {
-        const [projectsRes, postsRes, timelineRes] = await Promise.all([
+        const [projectsRes, postsRes, hobbiesRes] = await Promise.all([
           supabase.from("projects").select("id", { count: "exact" }),
           supabase.from("posts").select("id, is_published", { count: "exact" }),
-          supabase.from("timeline").select("id", { count: "exact" }),
+          supabase.from("hobbies").select("id", { count: "exact" }),
         ]);
 
         setStats({
@@ -36,7 +36,7 @@ export default function DashboardPage() {
           posts: postsRes.count || 0,
           publishedPosts:
             (postsRes.data || []).filter((p: { is_published: boolean }) => p.is_published).length,
-          timeline: timelineRes.count || 0,
+          hobbies: hobbiesRes.count || 0,
         });
       } finally {
         setLoading(false);
@@ -50,14 +50,14 @@ export default function DashboardPage() {
     { label: "作品总数", value: stats.projects, href: "/admin/projects", color: "border-l-purple-500" },
     { label: "文章总数", value: stats.posts, href: "/admin/posts", color: "border-l-blue-500" },
     { label: "已发布文章", value: stats.publishedPosts, href: "/admin/posts", color: "border-l-green-500" },
-    { label: "时间线条目", value: stats.timeline, href: "/admin/timeline", color: "border-l-accent" },
+    { label: "爱好总数", value: stats.hobbies, href: "/admin/hobbies", color: "border-l-accent" },
   ];
 
   const quickLinks = [
     { label: "编辑个人名片", href: "/admin/profile", desc: "更新头像、简介、技能、社交链接" },
     { label: "写新文章", href: "/admin/posts/new", desc: "发布一篇新的技术博客" },
     { label: "添加作品", href: "/admin/projects/new", desc: "添加一个新项目展示" },
-    { label: "添加时间线条目", href: "/admin/timeline/new", desc: "记录一个学习或工作节点" },
+    { label: "添加爱好", href: "/admin/hobbies/new", desc: "添加摄影、音乐、技能等爱好内容" },
   ];
 
   return (

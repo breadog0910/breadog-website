@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
+import ImageUpload from "@/components/image-upload";
 import { useEffect, useState } from "react";
 import type { Profile } from "@/lib/types";
 
@@ -140,17 +141,11 @@ export default function ProfileEditPage() {
           />
         </div>
 
-        <div>
-          <label className="block text-sm text-muted mb-1.5">头像 URL</label>
-          <input
-            type="text"
-            value={form.avatar_url}
-            onChange={(e) => setForm({ ...form, avatar_url: e.target.value })}
-            placeholder="https://example.com/avatar.jpg"
-            className="w-full px-3 py-2 rounded-lg bg-background border border-card-border
-                       text-foreground text-sm focus:outline-none focus:border-primary/50"
-          />
-        </div>
+        <ImageUpload
+          label="头像"
+          value={form.avatar_url}
+          onChange={(url) => setForm({ ...form, avatar_url: url })}
+        />
 
         <div>
           <label className="block text-sm text-muted mb-1.5">个人简介</label>

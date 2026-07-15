@@ -10,7 +10,7 @@ const ADMIN_LINKS = [
   { href: "/admin/profile", label: "个人名片", icon: "👤" },
   { href: "/admin/projects", label: "作品管理", icon: "💼" },
   { href: "/admin/posts", label: "文章管理", icon: "📝" },
-  { href: "/admin/timeline", label: "时间线", icon: "📅" },
+  { href: "/admin/hobbies", label: "爱好管理", icon: "🎯" },
 ];
 
 export default function AdminShell({

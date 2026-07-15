@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { href: "/home", label: "关于我" },
   { href: "/projects", label: "作品集" },
   { href: "/blog", label: "博客" },
-  { href: "/timeline", label: "时间线" },
+  { href: "/hobbies", label: "爱好" },
 ];
 
 export default function Navbar() {

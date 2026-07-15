@@ -61,6 +61,27 @@ export interface TimelineEntry {
   created_at: string;
 }
 
+export interface Hobby {
+  id: string;
+  title: string;
+  description: string;
+  category: "photography" | "music" | "skills" | "gaming" | "reading" | "other";
+  cover_url: string;
+  link: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export const HOBBY_CATEGORIES = [
+  { value: "photography", label: "摄影", icon: "📷" },
+  { value: "music", label: "音乐", icon: "🎵" },
+  { value: "skills", label: "技能", icon: "💡" },
+  { value: "gaming", label: "游戏", icon: "🎮" },
+  { value: "reading", label: "阅读", icon: "📚" },
+  { value: "other", label: "其他", icon: "❤️" },
+] as const;
+
 // ==================== API 类型 ====================
 
 export interface ApiResponse<T = unknown> {

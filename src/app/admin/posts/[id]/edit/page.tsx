@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
+import ImageUpload from "@/components/image-upload";
 import type { Post } from "@/lib/types";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -108,12 +109,11 @@ export default function EditPostPage() {
             rows={3}
           />
         </Field>
-        <Field label="封面图 URL">
-          <Input
-            value={form.cover_url}
-            onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
-          />
-        </Field>
+        <ImageUpload
+          label="封面图"
+          value={form.cover_url}
+          onChange={(url) => setForm({ ...form, cover_url: url })}
+        />
         <Field label="标签（逗号分隔）">
           <Input
             value={form.tags}

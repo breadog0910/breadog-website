@@ -1,12 +1,13 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
+import type { Hobby } from "@/lib/types";
+import { HOBBY_CATEGORIES } from "@/lib/types";
 import ImageUpload from "@/components/image-upload";
-import type { Project } from "@/lib/types";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function EditProjectPage() {
+export default function EditHobbyPage() {
   const { supabase } = useAuth();
   const router = useRouter();
   const params = useParams();
@@ -16,32 +17,26 @@ export default function EditProjectPage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
+    category: "other" as Hobby["category"],
     cover_url: "",
-    tech_stack: "",
     link: "",
-    github_url: "",
-    is_published: false,
     sort_order: 0,
   });
 
   useEffect(() => {
     async function fetch() {
       const { data } = await supabase
-        .from("projects")
+        .from("hobbies")
         .select("*")
         .eq("id", id)
         .single();
       if (data) {
         setForm({
           title: data.title,
-          description: data.description,
+          description: data.description || "",
+          category: data.category,
           cover_url: data.cover_url || "",
-          tech_stack: Array.isArray(data.tech_stack)
-            ? data.tech_stack.join(", ")
-            : "",
           link: data.link || "",
-          github_url: data.github_url || "",
-          is_published: data.is_published,
           sort_order: data.sort_order || 0,
         });
       }
@@ -51,27 +46,27 @@ export default function EditProjectPage() {
   }, [supabase, id]);
 
   const handleSave = async () => {
+    if (!form.title) {
+      alert("标题不能为空");
+      return;
+    }
     setSaving(true);
+
     const { error } = await supabase
-      .from("projects")
+      .from("hobbies")
       .update({
         title: form.title,
         description: form.description,
+        category: form.category,
         cover_url: form.cover_url,
-        tech_stack: form.tech_stack
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
         link: form.link,
-        github_url: form.github_url,
-        is_published: form.is_published,
         sort_order: form.sort_order,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id);
 
     if (!error) {
-      router.push("/admin/projects");
+      router.push("/admin/hobbies");
     } else {
       alert("保存失败: " + error.message);
     }
@@ -88,9 +83,28 @@ export default function EditProjectPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">编辑作品</h1>
+      <h1 className="text-2xl font-bold mb-6">编辑爱好</h1>
       <div className="space-y-4 p-6 rounded-xl border border-card-border bg-card-bg">
-        <Field label="作品名称">
+        <Field label="分类">
+          <select
+            value={form.category}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                category: e.target.value as Hobby["category"],
+              })
+            }
+            className="w-full px-3 py-2 rounded-lg bg-background border border-card-border
+                       text-foreground text-sm focus:outline-none focus:border-primary/50"
+          >
+            {HOBBY_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.icon} {c.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="标题">
           <Input
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -100,52 +114,30 @@ export default function EditProjectPage() {
           <TextArea
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            rows={5}
+            rows={3}
           />
         </Field>
         <ImageUpload
-          label="封面图"
+          label="封面图片"
           value={form.cover_url}
           onChange={(url) => setForm({ ...form, cover_url: url })}
         />
-        <Field label="技术栈（逗号分隔）">
-          <Input
-            value={form.tech_stack}
-            onChange={(e) => setForm({ ...form, tech_stack: e.target.value })}
-          />
-        </Field>
-        <Field label="项目链接">
+        <Field label="外链（可选）">
           <Input
             value={form.link}
             onChange={(e) => setForm({ ...form, link: e.target.value })}
-          />
-        </Field>
-        <Field label="GitHub 链接">
-          <Input
-            value={form.github_url}
-            onChange={(e) => setForm({ ...form, github_url: e.target.value })}
+            placeholder="https://..."
           />
         </Field>
         <Field label="排序（数字越小越靠前）">
           <Input
             type="number"
-            value={String(form.sort_order)}
+            value={form.sort_order}
             onChange={(e) =>
               setForm({ ...form, sort_order: Number(e.target.value) })
             }
           />
         </Field>
-        <label className="flex items-center gap-2 text-sm text-muted cursor-pointer">
-          <input
-            type="checkbox"
-            checked={form.is_published}
-            onChange={(e) =>
-              setForm({ ...form, is_published: e.target.checked })
-            }
-            className="w-4 h-4 rounded accent-primary"
-          />
-          已发布
-        </label>
         <button
           onClick={handleSave}
           disabled={saving}
